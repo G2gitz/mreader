@@ -1,14 +1,28 @@
+import 'package:crystal_navigation_bar/crystal_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:mreader/components/colors.dart';
 import 'package:mreader/pages/updatepage.dart';
 
-class Homepage extends StatelessWidget {
+class Homepage extends StatefulWidget {
   const Homepage({super.key});
+
+  @override
+  State<Homepage> createState() => _HomepageState();
+}
+
+class _HomepageState extends State<Homepage> {
+  var _index = 0;
+
+  void updateindex(int index) {
+    setState(() {
+      _index = index;
+    });
+    print(_index);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Text(
@@ -49,6 +63,37 @@ class Homepage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [],
         ),
+      ),
+      //custom navigation bar
+      bottomNavigationBar: CrystalNavigationBar(
+        currentIndex: _index,
+        height: 10,
+        indicatorColor: secondary_color,
+        unselectedItemColor: white_color,
+        selectedItemColor: secondary_color,
+        backgroundColor: primary_color,
+        enableFloatingNavBar: true,
+        onTap: (index) {
+          updateindex(index);
+        },
+        items: [
+          CrystalNavigationBarItem(
+            icon: Icons.home,
+            selectedColor: secondary_color,
+          ),
+          CrystalNavigationBarItem(
+            icon: Icons.update,
+            selectedColor: secondary_color,
+          ),
+          CrystalNavigationBarItem(
+            icon: Icons.history,
+            selectedColor: secondary_color,
+          ),
+          CrystalNavigationBarItem(
+            icon: Icons.more_horiz,
+            selectedColor: secondary_color,
+          ),
+        ],
       ),
     );
   }
