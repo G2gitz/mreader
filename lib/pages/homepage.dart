@@ -61,11 +61,39 @@ class _HomepageState extends State<Homepage> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [],
+          children: [
+            Container(
+              color: Colors.green,
+              height: 10,
+              width: 350,
+            ),
+            Expanded(
+                child: GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2),
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: Container(
+                            
+                            // color: white_color,
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    image: AssetImage(
+                                        'lib/assets/images/loli.jpeg'),
+                                    fit: BoxFit.fill)),
+                          ),
+                        ),
+                      );
+                    }))
+          ],
         ),
       ),
       //custom navigation bar
       bottomNavigationBar: CrystalNavigationBar(
+        
         currentIndex: _index,
         height: 10,
         indicatorColor: secondary_color,
