@@ -1,7 +1,10 @@
-import 'package:crystal_navigation_bar/crystal_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:mreader/components/colors.dart';
+import 'package:mreader/components/mynavbar.dart';
 import 'package:mreader/pages/updatepage.dart';
+import 'historypage.dart';
+import 'home.dart';
+import 'morepage.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -11,115 +14,123 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
-  var _index = 0;
+  final PageController _pageController = PageController();
+  int _currentIndex = 0;
+  final List<Widget> pages = [
+    Home(),
+    Updatepage(),
+    Historypage(),
+    Customizepage()
+  ];
+  final List<String> pageTitles = ["HOME", "UPDATE", "HISTORY", " "];
 
-  void updateindex(int index) {
-    setState(() {
-      _index = index;
+  @override
+  void initState() {
+    super.initState();
+    _pageController.addListener(() {
+      int newIndex = _pageController.page!.round();
+      if (newIndex != _currentIndex) {
+        setState(() {
+          _currentIndex = newIndex;
+        });
+      }
     });
-    print(_index);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text(
-          "HOME",
-          style: TextStyle(color: white_color, fontSize: 20.0),
-        ),
-        actions: [
-          IconButton(
-              onPressed: () {
-                //navigation routing
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => Updatepage()));
-              },
-              icon: Icon(
-                Icons.search,
-                color: white_color,
-              )),
-          IconButton(
-              onPressed: () {},
-              icon: Icon(
-                Icons.sort_sharp,
-                color: white_color,
-              )),
-          IconButton(
-              onPressed: () {},
-              icon: Icon(
-                Icons.more_vert,
-                color: white_color,
-              ))
-        ], //more //list
-        backgroundColor: primary_color,
-      ),
-      backgroundColor: primary_color,
-      // floatingActionButton: FloatingActionButton(onPressed: (){},backgroundColor: secondary_color,),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              color: Colors.green,
-              height: 10,
-              width: 350,
-            ),
-            Expanded(
-                child: GridView.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2),
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10.0),
-                          child: Container(
-                            
-                            // color: white_color,
-                            decoration: BoxDecoration(
-                                image: DecorationImage(
-                                    image: AssetImage(
-                                        'lib/assets/images/loli.jpeg'),
-                                    fit: BoxFit.fill)),
-                          ),
+      appBar: _currentIndex != 3
+          ? AppBar(
+              automaticallyImplyLeading: false,
+              title: Text(
+                pageTitles[_currentIndex],
+                style: TextStyle(color: white_color, fontSize: 20.0),
+              ),
+              actions: [
+                IconButton(
+                  onPressed: () {},
+                  icon: Icon(Icons.search, color: white_color),
+                ),
+                IconButton(
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return Container(
+                          height: 250,
+                          color: white_color,
+                        );
+                      },
+                    );
+                  },
+                  icon: Icon(Icons.sort_sharp, color: white_color),
+                ),
+                PopupMenuButton<int>(
+                  color: primary_color.withOpacity(0.7),
+                  icon: Icon(Icons.more_vert, color: white_color),
+                  itemBuilder: (BuildContext context) {
+                    return [
+                      PopupMenuItem<int>(
+                        value: 1,
+                        child: Text(
+                          "Update All",
+                          style: TextStyle(color: white_color),
                         ),
-                      );
-                    }))
-          ],
-        ),
-      ),
-      //custom navigation bar
-      bottomNavigationBar: CrystalNavigationBar(
-        
-        currentIndex: _index,
-        height: 10,
-        indicatorColor: secondary_color,
-        unselectedItemColor: white_color,
-        selectedItemColor: secondary_color,
-        backgroundColor: primary_color,
-        enableFloatingNavBar: true,
-        onTap: (index) {
-          updateindex(index);
-        },
-        items: [
-          CrystalNavigationBarItem(
-            icon: Icons.home,
-            selectedColor: secondary_color,
+                      ),
+                      PopupMenuItem<int>(
+                        value: 2,
+                        child: Text(
+                          "Open Random",
+                          style: TextStyle(color: white_color),
+                        ),
+                      ),
+                     
+                    ];
+                  },
+                  onSelected: (value) {
+                    // Handle menu item selection
+                    switch (value) {
+                      case 1:
+                        // Action for Option 1
+                        break;
+                      case 2:
+                        // Action for Option 2
+                        break;
+                    }
+                  },
+                )
+              ],
+              backgroundColor: primary_color,
+            )
+          : AppBar(
+              // title: Text("More"),
+              backgroundColor: primary_color,
+            ),
+      backgroundColor: primary_color,
+      body: Stack(
+        children: [
+          PageView(
+            controller: _pageController,
+            onPageChanged: (index) {
+              setState(() {
+                _currentIndex = index;
+              });
+            },
+            children: pages,
           ),
-          CrystalNavigationBarItem(
-            icon: Icons.update,
-            selectedColor: secondary_color,
-          ),
-          CrystalNavigationBarItem(
-            icon: Icons.history,
-            selectedColor: secondary_color,
-          ),
-          CrystalNavigationBarItem(
-            icon: Icons.more_horiz,
-            selectedColor: secondary_color,
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Mynavbar(
+              pageController: _pageController,
+              indexx: _currentIndex, // Pass the current index
+            ),
           ),
         ],
       ),

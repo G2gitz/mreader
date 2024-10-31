@@ -9,8 +9,9 @@
 # packages, and plugins designed to encourage good coding practices.
 analyzer:
   errors:
-    prefer_const_constructors: ignore
+    prefer_const_constructors: ignore ignore ignore
     non_constant_identifier_names: ignore
+    sort_child_properties_last: ignore
 include: package:flutter_lints/flutter.yaml
 
 linter:
